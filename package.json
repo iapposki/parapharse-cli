@@ -1,0 +1,20 @@
+{
+  "name": "paraphrase-cli",
+  "version": "1.0.0",
+  "description": "paraphrases text to desired pre determined format",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["cli"],
+  "bin": {
+    "opcli": "./bin/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.5",
+    "dotenv": "^16.3.1",
+    "yargs": "^17.7.2"
+  }
+}
