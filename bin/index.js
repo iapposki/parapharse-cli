@@ -46,12 +46,14 @@ yargs.command({
         type : {
             describe: "Type of the paraphrasing. Options : (1) urgent (2) professional (3) creative",
             demandOption: true,
-            type: 'string'
+            type: 'string',
+            alias: 't',
         },
         prompt: {
             describe: 'Prompt which needs to be paraphrased.',
             demandOption: true,
-            type: 'string'
+            type: 'string',
+            alias: 'p',
         }
     },
     handler: (argv) => {
