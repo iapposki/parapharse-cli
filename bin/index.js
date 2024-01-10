@@ -1,45 +1,40 @@
 #! /usr/bin/env node
 
-const axios = require('axios');
-const yargs = require('yargs');
-const {config} = require('../config')
+import axios from "axios";
+import yargs from "yargs";
+import {hideBin} from "yargs/helpers";
+import config from '../config/index.js'
 
 const allTypes = {"urgent": "standard", "professional": "fluent", "creative": "creative"}
 
 
 // function to get the desired paraphrased result
-function paraphraseCode(prompt, type) {
+export const paraphraseCode = async (prompt, type) => {
     if (prompt.length == 0) {
-        console.error('Please enter a valid sentence.')
-        process.exit(1)
+        return "Error-001: Valid prompt not provided."
     }
     if (!allTypes[type]) {
-        console.error("Please enter a valid type of parapharsing.")
-        console.info("Valid types are : (1) urgent (2) professional (3) creative")
-        process.exit(1)
+        return "Error-002: Valid type not provided. Valid types are : (1) urgent (2) professional (3) creative"
     }
-    axios.post(
-        config.paraphraseApiEndpoint,
-        {
-            "text": "This is a sample sentence to test out the paraphrasing tool.",
-            "mode": allTypes[type]},
-        {
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }
-        )
-        .then((response) => {
-        console.log('Paraphrased text :');
-        console.log(response.data.data[0]);
-    })
-    .catch((error) => {
-        console.error(`Error communicating with OpenAI API: ${error.message}`);
-    });
+    try {
+        const resp = await axios.post(
+            config.paraphraseApiEndpoint,
+            {
+                "text": "This is a sample sentence to test out the paraphrasing tool.",
+                "mode": allTypes[type]},
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+        return `Paraphrased text : ${resp.data.data[0]}`
+    } catch (error) {
+        return `Error-003: Error communicating with API. ${error.message}`
+    }
 }
 
 // command to paraphrase the prompt
-yargs.command({
+yargs(hideBin(process.argv)).command({
     command: 'paraphrase',
     describe: 'Paraphrases the prompt to the desired type',
     builder: {
@@ -56,8 +51,9 @@ yargs.command({
             alias: 'p',
         }
     },
-    handler: (argv) => {
-        paraphraseCode(argv.prompt, argv.type);
+    handler: async (argv) => {
+        const resp = await paraphraseCode(argv.prompt, argv.type);
+        console.log(resp)
     }
     })
     .demandCommand(1, 'Please provide a valid command.')
